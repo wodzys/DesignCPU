@@ -6,7 +6,7 @@ module rom(
 
     reg [31:0] rom[63:0];
 
-    initial $readmemh ("rom.data", rom);
+    initial $readmemh ("../RTL/rom.data", rom);
 
     always @ (*)
     begin
