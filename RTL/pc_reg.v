@@ -1,27 +1,27 @@
 module pc_reg (
     input wire clk,
     input wire rst,
-    output reg [5:0] pc,
+    output reg [`InstAddrBus] pc,
     output reg ce
 );
 
 always @ (posedge clk)
 begin
-    if(ce == 1'b0) begin
-        pc <= 6'd0;
+    if(ce == `ChipDisable) begin
+        pc <= `ZeroWord;
     end
     else begin
-        pc <= pc + 1'b1;
+        pc <= pc + 4'h4;
     end
 end
 
 always @ (posedge clk)
 begin
-    if(rst == 1'b1) begin
-        ce <= 1'b0;
+    if(rst == `RstEnable) begin
+        ce <= `ChipDisable;
     end
     else begin
-        ce <= 1'b1;
+        ce <= `ChipEnable;
     end
 end
 

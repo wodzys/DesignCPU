@@ -21,4 +21,9 @@ inst_fetch inst_fetch0(
     .inst_o( inst )
 );
 
+// initial begin
+//     $dumpfile("inst_fetch_tb.vcd");
+//     $dumpvars(0, inst_fetch_tb);
+// end
+
 endmodule
