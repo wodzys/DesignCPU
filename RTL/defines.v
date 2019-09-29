@@ -30,8 +30,8 @@
 //***************************** 与指令存储器 ROM 有关的宏定义 *****************************//
 `define InstAddrBus     31:0                // ROM 地址总线宽度
 `define InstBus         31:0                // ROM 数据总线宽度
-`define InstMemNum      131071              // ROM 的实际大小为 128KB   // Here may be a problem
-`define InstMemNumLog2  17                  // ROM 实际使用的地址线宽度
+`define InstMemNum      4                   // ROM 的实际大小为 128KB   // Here may be a problem
+`define InstMemNumLog2  2                  // ROM 实际使用的地址线宽度
 
 //***************************** 与通用寄存器 Regfile 有关的宏定义 *****************************//
 `define RegAddrBus      4:0                 // Regfile 模块的地址线宽度

@@ -1,3 +1,5 @@
+`include "defines.v"
+
 module if_id (
     input wire clk,
     input wire rst,
@@ -8,7 +10,7 @@ module if_id (
 
     // 对应译码阶段的信号
     output reg [`InstAddrBus] id_pc,
-    output wire [`InstBus] id_inst
+    output reg [`InstBus] id_inst
 );
 
     always @ (posedge clk)

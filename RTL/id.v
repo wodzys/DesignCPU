@@ -50,7 +50,66 @@ module id (
 			reg2_read_o <= 1'b0;
 			reg1_addr_o <= `NOPRegAddr;
 			reg2_addr_o <= `NOPRegAddr;
-			imm <= 32'h0;	
+			imm <= `ZeroWord;
+        end
+        else begin
+            aluop_o <= `EXE_NOP_OP;
+            alusel_o <= `EXE_RES_NOP;
+            wd_o <= inst_i[15:11];          // 通常情况下默认保存到 rd 寄存器
+            wreg_o <= `WriteDisable;
+			instvalid <= `InstInValid;
+			reg1_read_o <= 1'b0;
+			reg2_read_o <= 1'b0;
+			reg1_addr_o <= inst_i[25:21];   // 默认通过 regfile 读端口 1 的寄存器地址
+			reg2_addr_o <= inst_i[20:16];   // 默认通过 regfile 读端口 2 的寄存器地址
+			imm <= `ZeroWord;
+        end
+
+        case (op)
+            `EXE_ORI : begin                // 依据 op 的值判断是否是 ori 指令
+                wreg_o <= `WriteEnable;     // ori 指令需要将结果写入目的寄存器
+                wd_o <= inst_i[20:16];      // 指令执行要写的目的寄存器地址
+                aluop_o <= `EXE_OR_OP;      // 运算的子类型是逻辑“或”运算
+                alusel_o <= `EXE_RES_LOGIC; // 运算类型是逻辑运算
+                reg1_read_o <= 1'b1;        // 需要通过 Regfile 的读端口 1 读取寄存器
+                reg2_read_o <= 1'b0;        // 不需要通过 Regfile 的读端口 2 读取寄存器
+                imm <= {16'h0000, inst_i[15:0]};    // 指令执行需要的立即数
+                instvalid <= `InstValid;    // ori 指令是有效指令
+            end
+            default: begin
+            end
+        endcase
+    end
+//--------------------------第二阶段：确定进行运算的源操作数 1 -----------------------------------//
+    always @ (*)
+    begin
+        if(rst == `RstEnable) begin
+            reg1_o <= `ZeroWord;
+        end
+        else if(reg1_read_o == 1'b1) begin
+            reg1_o <= reg1_data_i;          // Regfile 读端口 1 的输出值
+        end
+        else if(reg1_read_o == 1'b0) begin
+            reg1_o <= imm;                  // 立即数
+        end
+        else begin
+            reg1_o <= `ZeroWord;
+        end
+    end
+//--------------------------第三阶段：确定进行运算的源操作数 2 -----------------------------------//
+    always @ (*)
+    begin
+        if(rst == `RstEnable) begin
+            reg2_o <= `ZeroWord;
+        end
+        else if(reg2_read_o == 1'b1) begin
+            reg2_o <= reg2_data_i;          // Regfile 读端口 1 的输出值
+        end
+        else if(reg2_read_o == 1'b0) begin
+            reg2_o <= imm;                  // 立即数
+        end
+        else begin
+            reg2_o <= `ZeroWord;
         end
     end
 
