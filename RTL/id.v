@@ -20,8 +20,17 @@ module id (
     output reg [`RegBus] reg1_o,
     output reg [`RegBus] reg2_o,
     output reg [`RegAddrBus] wd_o,      // 译码阶段的指令要写入的目的寄存器地址
-    output reg wreg_o                   // 译码阶段的指令是否有要写入的目的寄存器
+    output reg wreg_o,                  // 译码阶段的指令是否有要写入的目的寄存器
 
+    // 处于执行阶段的指令的运算结果
+    input wire ex_wreg_i,
+    input wire [`RegBus] ex_wdata_i,
+    input wire [`RegAddrBus] ex_wd_i,
+
+    // 处于访存阶段的指令运算结果
+    input wire mem_wreg_i,
+    input wire [`RegBus] mem_wdata_i,
+    input wire [`RegAddrBus] mem_wd_i
 );
 
     // 取得指令的功能码， 功能码
@@ -86,6 +95,12 @@ module id (
         if(rst == `RstEnable) begin
             reg1_o <= `ZeroWord;
         end
+        else if((reg1_read_o == 1'b1) && (ex_wreg_i == 1'b1)
+                && (ex_wd_i == reg1_addr_o)) begin
+            reg1_o <= ex_wdata_i;
+        end
+        else if((reg1_read_o == 1'b1) && (mem_wreg_i == 1'b1)
+                && ())
         else if(reg1_read_o == 1'b1) begin
             reg1_o <= reg1_data_i;          // Regfile 读端口 1 的输出值
         end
